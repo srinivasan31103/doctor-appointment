@@ -47,27 +47,29 @@ const authLimiter = rateLimit({
 app.use('/api/users/login', authLimiter);
 app.use('/api/users/register', authLimiter);
 
-// SECURITY FIX: Proper CORS configuration - only allow specific origin
+// SECURITY FIX: Proper CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
 
-    // In development, allow localhost on any port
-    if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost')) {
-      return callback(null, true);
-    }
+    // Allowed origins
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'https://doctor-appointment-tau-dusky.vercel.app',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
 
-    // In production, only allow specific origin
-    const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
-    if (origin === allowedOrigin) {
+    if (allowedOrigins.some(allowed => origin === allowed || origin.endsWith('.vercel.app'))) {
       return callback(null, true);
     }
 
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
   maxAge: 600 // 10 minutes
