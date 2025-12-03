@@ -39,10 +39,11 @@ const createDemoAccounts = async () => {
 
     // Create Admin User
     console.log('[1/3] Creating Admin account...');
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     const admin = await User.create({
       name: 'Admin User',
       email: 'admin@healthcare.com',
-      password: 'admin123',
+      password: adminPassword,
       role: 'admin',
       phone: '+1234567890',
       age: 35,
@@ -50,7 +51,7 @@ const createDemoAccounts = async () => {
     });
     console.log('✓ Admin created');
     console.log(`   Email: admin@healthcare.com`);
-    console.log(`   Password: admin123\n`);
+    console.log(`   Password: [SET VIA ENVIRONMENT]\n`);
 
     // Create Doctor User
     console.log('[2/3] Creating Doctor account...');
